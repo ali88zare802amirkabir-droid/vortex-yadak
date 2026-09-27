@@ -1,3 +1,5 @@
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Prisma, PrismaClient } from "@/generated/prisma";
 import type {
   Product,
   Vendor,
@@ -6,24 +8,17 @@ import type {
   ReservationStatus,
 } from "./types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PrismaClient = any;
-
 let _prisma: PrismaClient | null = null;
 let _attempted = false;
 
 async function loadPrismaClient(): Promise<PrismaClient | null> {
   if (_attempted) return _prisma;
   _attempted = true;
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) return null;
   try {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) return null;
-    const { PrismaPg } = await import("@prisma/adapter-pg");
-    const clientModule = await import("@prisma/client");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const PC = (clientModule as any).PrismaClient ?? clientModule.default?.PrismaClient;
-    const adapter = new PrismaPg({ connectionString } as never);
-    _prisma = new PC({ adapter } as never);
+    const adapter = new PrismaPg({ connectionString });
+    _prisma = new PrismaClient({ adapter });
     await _prisma.$connect();
     return _prisma;
   } catch (err) {
@@ -33,8 +28,17 @@ async function loadPrismaClient(): Promise<PrismaClient | null> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapProduct(p: any): Product {
+const productInclude = {
+  vendor: true,
+  compatibilities: { include: { vehicle: true } },
+} as const satisfies Prisma.ProductInclude;
+
+type ProductRow = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
+type ReservationRow = Prisma.ReservationGetPayload<{
+  include: { product: true };
+}>;
+
+function mapProduct(p: ProductRow): Product {
   return {
     id: p.id,
     name: p.name,
@@ -48,15 +52,11 @@ function mapProduct(p: any): Product {
     vendorId: p.vendorId,
     vendorName: p.vendor?.name,
     vendorCity: p.vendor?.address?.split("،")[0],
-    vehicleIds: (p.compatibilities ?? []).map(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (c: any) => c.vehicleId ?? c.vehicle?.id
-    ),
+    vehicleIds: (p.compatibilities ?? []).map((c) => c.vehicleId),
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapReservation(r: any): Reservation {
+function mapReservation(r: ReservationRow): Reservation {
   const created =
     r.createdAt instanceof Date ? r.createdAt : new Date(r.createdAt);
   return {
@@ -71,24 +71,23 @@ function mapReservation(r: any): Reservation {
   };
 }
 
-const productInclude = {
-  vendor: true,
-  compatibilities: { include: { vehicle: true } },
-} as const;
-
 function needDb(db: PrismaClient | null): PrismaClient {
   if (!db) throw new Error("Database not available");
   return db;
 }
 
+export async function connectPrisma(): Promise<boolean> {
+  return (await loadPrismaClient()) !== null;
+}
+
 export const prismaRepo = {
   getVehicles: async (): Promise<Vehicle[]> => {
     const db = needDb(await loadPrismaClient());
-    return (await db.vehicle.findMany()) as Vehicle[];
+    return await db.vehicle.findMany();
   },
   getVendors: async (): Promise<Vendor[]> => {
     const db = needDb(await loadPrismaClient());
-    return (await db.vendor.findMany()) as Vendor[];
+    return await db.vendor.findMany();
   },
   getProducts: async (): Promise<Product[]> => {
     const db = needDb(await loadPrismaClient());
@@ -123,6 +122,7 @@ export const prismaRepo = {
     const row = await db.reservation.create({
       data: {
         productId: data.productId,
+        vendorId: product.vendorId,
         customerName: data.customerName,
         phone: data.phone,
         quantity: data.quantity,
@@ -143,8 +143,7 @@ export const prismaRepo = {
     const db = needDb(await loadPrismaClient());
     const row = await db.reservation.update({
       where: { id },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data: { status: status as never },
+      data: { status },
       include: { product: true },
     });
     return mapReservation(row);
@@ -177,7 +176,7 @@ export const prismaRepo = {
     patch: Partial<Product>
   ): Promise<Product> => {
     const db = needDb(await loadPrismaClient());
-    const updateData: Record<string, unknown> = {};
+    const updateData: Prisma.ProductUpdateInput = {};
     if (patch.name !== undefined) updateData.name = patch.name;
     if (patch.category !== undefined) updateData.category = patch.category;
     if (patch.brand !== undefined) updateData.brand = patch.brand;
@@ -200,7 +199,7 @@ export const prismaRepo = {
     }
     const row = await db.product.update({
       where: { id },
-      data: updateData as never, // eslint-disable-line @typescript-eslint/no-explicit-any
+      data: updateData,
       include: productInclude,
     });
     return mapProduct(row);

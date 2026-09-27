@@ -1,6 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../src/generated/prisma";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error(
+    "DATABASE_URL is required to run the seed. Set it in .env or pass it inline."
+  );
+}
+
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 
 const vehicles = [
   { brand: "پژو", model: "206", year: 2005 },
@@ -64,7 +72,7 @@ const pairs: Array<[string, string, string]> = [
   ["لاستیک تابستانی پژو 206", "جلوبندی", "میشلان"],
   ["لاستیک زمستانی تیبا", "جلوبندی", "میشلان"],
   ["فیلتر هوا پژو 405", "مصرفی", "فیلتر"],
-  ["فیلتر هوا دنا", "م مصرفی", "فیلتر"],
+  ["فیلتر هوا دنا", "مصرفی", "فیلتر"],
   ["فیلتر سوخت دنا", "مصرفی", "دلکی"],
   ["فیلتر سوخت پژو 405", "مصرفی", "دلکی"],
   ["آنتی‌فریز زمستانی", "مصرفی", "پارس"],
@@ -77,6 +85,7 @@ async function main() {
   await prisma.productCompatibility.deleteMany();
   await prisma.reservation.deleteMany();
   await prisma.product.deleteMany();
+  await prisma.user.deleteMany();
   await prisma.vendor.deleteMany();
   await prisma.vehicle.deleteMany();
 

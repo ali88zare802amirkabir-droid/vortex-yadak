@@ -1,15 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { SearchSuggestions } from "@/components/search/search-suggestions";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const pathname = usePathname();
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {

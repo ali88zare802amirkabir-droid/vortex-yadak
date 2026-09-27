@@ -19,10 +19,17 @@ export async function GET(req: Request) {
   // Filters
   if (category) products = products.filter((p) => p.category === category);
   if (brand) products = products.filter((p) => p.brand === brand);
-  if (vehicle) products = products.filter((p) => {
-    const label = `${p.brand} ${p.technicalNo || ""}`.toLowerCase();
-    return label.includes(vehicle.toLowerCase());
-  });
+  if (vehicle) {
+    const allVehicles = await repo.getVehicles();
+    const label = vehicle.toLowerCase();
+    const matched = allVehicles.filter(
+      (v) =>
+        v.id === vehicle ||
+        `${v.brand} ${v.model}`.toLowerCase().includes(label)
+    );
+    const ids = new Set(matched.map((v) => v.id));
+    products = products.filter((p) => p.vehicleIds.some((id) => ids.has(id)));
+  }
   if (minPrice) products = products.filter((p) => p.price >= Number(minPrice));
   if (maxPrice) products = products.filter((p) => p.price <= Number(maxPrice));
 
@@ -31,7 +38,11 @@ export async function GET(req: Request) {
   else if (sort === "price_desc") products.sort((a, b) => b.price - a.price);
   else if (sort === "newest") products.reverse();
 
-  return NextResponse.json({ products, total: products.length });
+  return NextResponse.json({
+    products,
+    total: products.length,
+    vehicles: await repo.getVehicles(),
+  });
 }
 
 export async function POST(req: Request) {

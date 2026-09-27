@@ -1,55 +1,44 @@
-// eslint-disable-next-line react-hooks/set-state-in-effect
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { SearchSuggestion } from "@/lib/db/types";
 
+type SearchResult = { query: string; items: SearchSuggestion[] };
+
 export function SearchSuggestions({ query, onSelect, className }: { query: string; onSelect: (text: string) => void; className?: string }) {
-  const [items, setItems] = useState<SearchSuggestion[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<SearchResult | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        // close handled externally via open state
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  const trimmed = query.trim();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    if (!query || query.length < 1) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setItems([]);
-      return;
-    }
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTimeout(() => {
-      setLoading(true);
-    }, 0);
-    fetch(`/api/search?q=${encodeURIComponent(query)}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (!cancelled) {
-          setItems(data.suggestions || []);
-          setLoading(false);
+    if (!trimmed) return;
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        setResult({ query: trimmed, items: data.suggestions ?? [] });
+      } catch {
+        if (!controller.signal.aborted) {
+          setResult({ query: trimmed, items: [] });
         }
-      })
-      .catch(() => {
-        if (!cancelled) setLoading(false);
-      });
+      }
+    }, 200);
     return () => {
-      cancelled = true;
+      clearTimeout(timer);
+      controller.abort();
     };
-  }, [query]);
+  }, [trimmed]);
 
-  if (!query) return null;
+  if (!trimmed) return null;
+
+  const settled = result?.query === trimmed;
+  const items = settled ? result.items : [];
+  const loading = !settled;
 
   return (
     <div ref={ref} className={`absolute top-full mt-2 w-full rounded-lg border bg-popover shadow-lg shadow-black/5 z-50 py-1 ${className || ''}`}>

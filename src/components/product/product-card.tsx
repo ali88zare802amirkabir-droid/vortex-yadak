@@ -1,5 +1,5 @@
 import { Product } from "@/lib/db/types";
-import { formatPrice, getStockColor } from "@/lib/money";
+import { formatPrice } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 

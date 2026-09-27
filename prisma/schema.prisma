@@ -1,18 +1,18 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id    String @id @default(cuid())
-  name  String
-  phone String
-  role  Role
+  id     String  @id @default(cuid())
+  name   String
+  phone  String
+  role   Role
+  vendor Vendor?
 }
 
 enum Role {
@@ -22,57 +22,61 @@ enum Role {
 }
 
 model Vendor {
-  id      String   @id @default(cuid())
-  name    String
-  address String
-  phone   String
-  ownerId String?  @unique
-  user    User?    @relation(fields: [ownerId], references: [id])
+  id       String        @id @default(cuid())
+  name     String
+  address  String
+  phone    String
+  ownerId  String?       @unique
+  user     User?         @relation(fields: [ownerId], references: [id])
   products Product[]
   orders   Reservation[]
 }
 
 model Product {
-  id            String   @id @default(cuid())
-  name          String
-  category      String
-  brand         String
-  price         Int
-  stock         Int
-  description   String
-  technicalNo   String?
-  imageUrl      String?
-  vendorId      String
-  vendor        Vendor   @relation(fields: [vendorId], references: [id])
+  id              String                 @id @default(cuid())
+  name            String
+  category        String
+  brand           String
+  price           Int
+  stock           Int
+  description     String
+  technicalNo     String?
+  imageUrl        String?
+  vendorId        String
+  vendor          Vendor                 @relation(fields: [vendorId], references: [id])
   compatibilities ProductCompatibility[]
-  reservations  Reservation[]
+  reservations    Reservation[]
 }
 
 model Vehicle {
-  id    String   @id @default(cuid())
-  brand String
-  model String
-  year  Int
+  id       String                 @id @default(cuid())
+  brand    String
+  model    String
+  year     Int
   products ProductCompatibility[]
 }
 
 model ProductCompatibility {
-  productId String @id
-  vehicleId String @id
+  productId String
+  vehicleId String
   product   Product @relation(fields: [productId], references: [id])
   vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@id([productId, vehicleId])
 }
 
 model Reservation {
-  id          String   @id @default(cuid())
-  productId   String
+  id           String            @id @default(cuid())
+  productId    String
+  vendorId     String
   customerName String
-  phone       String
-  quantity    Int
-  status      ReservationStatus
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  product     Product  @relation(fields: [productId], references: [id])
+  phone        String
+  quantity     Int
+  status       ReservationStatus
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  product      Product           @relation(fields: [productId], references: [id])
+  vendor       Vendor            @relation(fields: [vendorId], references: [id])
 }
 
 enum ReservationStatus {

@@ -2,12 +2,11 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ProductCard } from "@/components/product/product-card";
-import { SectionHeader } from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Product } from "@/lib/db/types";
+import { Product, Vehicle } from "@/lib/db/types";
 
 const categories = ["موتور", "ترمز", "برق", "بدنه", "جلوبندی", "مصرفی"];
 const brands = ["NGK", "فیلتر", "پمپ", "لنت", "آپتون", "گلسن", "فیات", "مابوچی", "پارس", "کرین", "میشلان", "دلکی", "Denso", "هوندا", "ژاپنی"];
@@ -45,34 +44,48 @@ function ProductsContent() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState(searchParams.get("category") || "");
-  const [brand, setBrand] = useState(searchParams.get("brand") || "");
-  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
-  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
-  const [sortBy, setSortBy] = useState(searchParams.get("sort") || "default");
-  const [vehicle, setVehicle] = useState(searchParams.get("vehicle") || "");
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+
+  const q = searchParams.get("q") || "";
+  const category = searchParams.get("category") || "";
+  const brand = searchParams.get("brand") || "";
+  const minPrice = searchParams.get("minPrice") || "";
+  const maxPrice = searchParams.get("maxPrice") || "";
+  const sortBy = searchParams.get("sort") || "default";
+  const vehicle = searchParams.get("vehicle") || "";
+
+  const [searchDraft, setSearchDraft] = useState(q);
+  const [minDraft, setMinDraft] = useState(minPrice);
+  const [maxDraft, setMaxDraft] = useState(maxPrice);
 
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
+    const controller = new AbortController();
+    (async () => {
       try {
-        const res = await fetch("/api/products?" + new URLSearchParams({
-          ...(category && { category }),
-          ...(brand && { brand }),
-          ...(vehicle && { vehicle }),
-          ...(minPrice && { minPrice }),
-          ...(maxPrice && { maxPrice }),
-          ...(sortBy && { sort: sortBy }),
-        }).toString());
+        const res = await fetch(
+          "/api/products?" +
+            new URLSearchParams({
+              ...(q && { q }),
+              ...(category && { category }),
+              ...(brand && { brand }),
+              ...(vehicle && { vehicle }),
+              ...(minPrice && { minPrice }),
+              ...(maxPrice && { maxPrice }),
+              ...(sortBy !== "default" && { sort: sortBy }),
+            }).toString(),
+          { signal: controller.signal }
+        );
         const data = await res.json();
         setProducts(data.products || []);
+        if (data.vehicles) setVehicles(data.vehicles);
       } catch {
-        setProducts([]);
+        if (!controller.signal.aborted) setProducts([]);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
       }
-      setLoading(false);
-    }
-    fetchProducts();
-  }, [category, brand, vehicle, minPrice, maxPrice, sortBy]);
+    })();
+    return () => controller.abort();
+  }, [q, category, brand, vehicle, minPrice, maxPrice, sortBy]);
 
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -85,6 +98,21 @@ function ProductsContent() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-foreground">محصولات</h1>
+        <form
+          className="flex items-center gap-2 w-full sm:w-auto"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleFilterChange("q", searchDraft.trim());
+          }}
+        >
+          <Input
+            value={searchDraft}
+            onChange={(e) => setSearchDraft(e.target.value)}
+            placeholder="جستجوی نام، برند یا کد فنی..."
+            className="w-full sm:w-64"
+          />
+          <Button type="submit" variant="outline">جستجو</Button>
+        </form>
         <div className="flex items-center gap-3">
           <Select
             value={sortBy}
@@ -124,11 +152,48 @@ function ProductsContent() {
                   placeholder="همه"
                 />
               </div>
+              {vehicles.length > 0 && (
+                <div>
+                  <label className="text-xs text-muted-foreground">خودرو</label>
+                  <Select
+                    value={vehicle}
+                    onChange={(e) => handleFilterChange("vehicle", e.target.value)}
+                    options={vehicles.map(v => ({
+                      value: v.id,
+                      label: `${v.brand} ${v.model}`,
+                    }))}
+                    placeholder="همه"
+                  />
+                </div>
+              )}
               <div className="grid gap-2 grid-cols-2">
-                <Input label="حداقل قیمت" placeholder="۰" value={minPrice} onChange={(e) => handleFilterChange("minPrice", e.target.value)} type="number" />
-                <Input label="حداکثر قیمت" placeholder="۰" value={maxPrice} onChange={(e) => handleFilterChange("maxPrice", e.target.value)} type="number" />
+                <Input
+                  label="حداقل قیمت"
+                  placeholder="۰"
+                  value={minDraft}
+                  type="number"
+                  onChange={(e) => setMinDraft(e.target.value)}
+                  onBlur={() => handleFilterChange("minPrice", minDraft)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleFilterChange("minPrice", minDraft);
+                  }}
+                />
+                <Input
+                  label="حداکثر قیمت"
+                  placeholder="۰"
+                  value={maxDraft}
+                  type="number"
+                  onChange={(e) => setMaxDraft(e.target.value)}
+                  onBlur={() => handleFilterChange("maxPrice", maxDraft)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleFilterChange("maxPrice", maxDraft);
+                  }}
+                />
               </div>
               <Button variant="outline" onClick={() => {
+                setSearchDraft("");
+                setMinDraft("");
+                setMaxDraft("");
                 router.push("/products");
               }} className="w-full">پاک کردن فیلترها</Button>
             </div>

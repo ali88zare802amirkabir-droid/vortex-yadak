@@ -1,5 +1,5 @@
 import { memoryStore } from "./memory";
-import { prismaRepo } from "./prisma";
+import { connectPrisma, prismaRepo } from "./prisma";
 import type {
   Product,
   Vendor,
@@ -15,13 +15,14 @@ let _repo: Repo | null = null;
 export async function getRepo(): Promise<Repo> {
   if (_repo) return _repo;
   if (process.env.DATABASE_URL) {
-    try {
+    if (await connectPrisma()) {
       _repo = prismaRepo;
       console.log("DATABASE_URL detected, using Prisma/PostgreSQL.");
       return _repo;
-    } catch (err) {
-      console.error("Prisma init failed, falling back to memory:", err);
     }
+    console.error(
+      "DATABASE_URL is set but the connection failed, falling back to memory."
+    );
   }
   console.log("Using in-memory repository (Demo mode).");
   _repo = memoryStore;

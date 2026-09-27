@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/shared/section-header";
 import { formatPrice } from "@/lib/money";
 import type { Product } from "@/lib/db/types";
@@ -14,20 +13,20 @@ export default function VendorProductsPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/products");
-      const data = await res.json();
-      setProducts(data.products || []);
-    } catch {
-      setProducts([]);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    load();
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await fetch("/api/products", { signal: controller.signal });
+        const data = await res.json();
+        setProducts(data.products || []);
+      } catch {
+        if (!controller.signal.aborted) setProducts([]);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    })();
+    return () => controller.abort();
   }, []);
 
   const filtered = products.filter(
