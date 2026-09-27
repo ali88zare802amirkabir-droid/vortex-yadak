@@ -1,0 +1,82 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(cuid())
+  name  String
+  phone String
+  role  Role
+}
+
+enum Role {
+  USER
+  VENDOR
+  ADMIN
+}
+
+model Vendor {
+  id      String   @id @default(cuid())
+  name    String
+  address String
+  phone   String
+  ownerId String?  @unique
+  user    User?    @relation(fields: [ownerId], references: [id])
+  products Product[]
+  orders   Reservation[]
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  category      String
+  brand         String
+  price         Int
+  stock         Int
+  description   String
+  technicalNo   String?
+  imageUrl      String?
+  vendorId      String
+  vendor        Vendor   @relation(fields: [vendorId], references: [id])
+  compatibilities ProductCompatibility[]
+  reservations  Reservation[]
+}
+
+model Vehicle {
+  id    String   @id @default(cuid())
+  brand String
+  model String
+  year  Int
+  products ProductCompatibility[]
+}
+
+model ProductCompatibility {
+  productId String @id
+  vehicleId String @id
+  product   Product @relation(fields: [productId], references: [id])
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  productId   String
+  customerName String
+  phone       String
+  quantity    Int
+  status      ReservationStatus
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+enum ReservationStatus {
+  NEW
+  CONFIRMED
+  DELIVERED
+}
