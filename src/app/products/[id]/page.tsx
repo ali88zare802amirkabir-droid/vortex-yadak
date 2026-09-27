@@ -23,10 +23,10 @@ export default async function ProductPage({ params }: PageProps) {
     return (
       <div className="text-center py-16">
         <div className="mx-auto text-5xl">🔍</div>
-        <h3 className="mt-3 text-lg font-medium text-foreground">
+        <h3 className="mt-3 text-lg font-medium text-ink">
           محصول پیدا نشد
         </h3>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-ink-2">
           لطفاً کد محصول را بررسی کنید
         </p>
         <Link href="/products" className="mt-4 inline-block text-primary">
@@ -45,20 +45,20 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border bg-card p-4 shadow-soft">
-        <nav className="text-xs text-muted-foreground mb-3">
+      <div className="rounded-xl border bg-card p-4 shadow-pop">
+        <nav className="text-xs text-ink-2 mb-3">
           <Link href="/products" className="hover:text-primary">
             محصولات
           </Link>{" "}
           / {product.name}
         </nav>
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="aspect-square rounded-lg bg-muted/30 flex items-center justify-center text-6xl">
+          <div className="aspect-square rounded-xl bg-surface-2/40 flex items-center justify-center text-6xl">
             {categoryEmoji(product.category)}
           </div>
           <div className="space-y-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">
+              <h1 className="text-2xl font-bold text-ink">
                 {product.name}
               </h1>
               <div className="mt-2 flex items-center gap-2">
@@ -72,12 +72,12 @@ export default async function ProductPage({ params }: PageProps) {
             <div className="text-2xl font-bold text-primary">
               {formatPrice(product.price)}
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-ink-2 leading-relaxed">
               {product.description}
             </p>
             {product.technicalNo && (
               <div className="text-sm">
-                <span className="text-muted-foreground">شماره فنی:</span>{" "}
+                <span className="text-ink-2">شماره فنی:</span>{" "}
                 <span className="font-mono font-medium">
                   {product.technicalNo}
                 </span>
@@ -85,7 +85,7 @@ export default async function ProductPage({ params }: PageProps) {
             )}
             {compatibleVehicles.length > 0 && (
               <div className="text-sm">
-                <span className="text-muted-foreground">سازگار با:</span>{" "}
+                <span className="text-ink-2">سازگار با:</span>{" "}
                 <span className="font-medium">
                   {compatibleVehicles
                     .map((v) => `${v.brand} ${v.model}`)
@@ -96,15 +96,15 @@ export default async function ProductPage({ params }: PageProps) {
             {vendor && (
               <div className="text-sm space-y-1">
                 <div>
-                  <span className="text-muted-foreground">فروشگاه:</span>{" "}
+                  <span className="text-ink-2">فروشگاه:</span>{" "}
                   <span className="font-medium">{vendor.name}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">آدرس:</span>{" "}
+                  <span className="text-ink-2">آدرس:</span>{" "}
                   {vendor.address}
                 </div>
                 <div>
-                  <span className="text-muted-foreground">تماس:</span>{" "}
+                  <span className="text-ink-2">تماس:</span>{" "}
                   {vendor.phone}
                 </div>
               </div>

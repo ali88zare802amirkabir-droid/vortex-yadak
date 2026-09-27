@@ -55,7 +55,7 @@ export default function VendorProductsPage() {
         action={
           <Link
             href="/vendor/products/new"
-            className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex h-9 items-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             + افزودن محصول
           </Link>
@@ -66,10 +66,10 @@ export default function VendorProductsPage() {
         <Input placeholder="جستجو در محصولات..." value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
 
-      <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
+      <div className="overflow-x-auto rounded-xl border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b bg-muted/40 text-right">
+            <tr className="border-b bg-surface-2/60 text-right">
               <th className="p-3 font-semibold">نام محصول</th>
               <th className="p-3 font-semibold">برند</th>
               <th className="p-3 font-semibold">قیمت</th>
@@ -81,19 +81,19 @@ export default function VendorProductsPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                <td colSpan={6} className="p-6 text-center text-ink-2">
                   در حال بارگذاری...
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                <td colSpan={6} className="p-6 text-center text-ink-2">
                   محصولی یافت نشد
                 </td>
               </tr>
             ) : (
               filtered.map((p) => (
-                <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30">
+                <tr key={p.id} className="border-b last:border-0 hover:bg-surface-2/40">
                   <td className="p-3 font-medium">{p.name}</td>
                   <td className="p-3">{p.brand}</td>
                   <td className="p-3 whitespace-nowrap">{formatPrice(p.price)}</td>

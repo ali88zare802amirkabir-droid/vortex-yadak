@@ -1,22 +1,24 @@
-import { Vendor } from "@/lib/db/types";
 import Link from "next/link";
+import { Phone } from "lucide-react";
+import { Vendor } from "@/lib/db/types";
 
 export function VendorCard({ vendor }: { vendor: Vendor }) {
   return (
-    <Link href={`/vendor/${vendor.id}`} className="group rounded-xl border bg-card p-4 shadow-sm hover:shadow-card-hover hover:border-sky-300 transition-all text-center">
-      <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-amber-400 text-white text-xl font-bold mx-auto">
+    <Link
+      href={`/vendor/${vendor.id}`}
+      className="group flex flex-col items-center rounded-2xl border border-edge bg-card p-5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-pop"
+    >
+      <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-400 text-lg font-bold text-white shadow-[0_4px_16px_-6px_rgba(217,70,239,0.7)]">
         {vendor.name.charAt(0)}
-      </div>
-      <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{vendor.name}</h3>
-      <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{vendor.address}</p>
-      <div className="mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-          </svg>
-          {vendor.phone}
-        </span>
-      </div>
+      </span>
+      <h3 className="line-clamp-1 text-[14px] font-semibold text-ink transition-colors group-hover:text-accent">
+        {vendor.name}
+      </h3>
+      <p className="mt-1 line-clamp-1 text-[12px] text-ink-3">{vendor.address}</p>
+      <span className="mt-3 flex items-center gap-1.5 rounded-lg bg-surface-2 px-2.5 py-1 text-[12px] text-ink-2 transition-colors group-hover:text-accent">
+        <Phone className="h-3.5 w-3.5" />
+        <span dir="ltr">{vendor.phone}</span>
+      </span>
     </Link>
   );
 }

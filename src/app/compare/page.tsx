@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function ComparePage() {
   return (
-    <Suspense fallback={<div className="text-sm text-muted-foreground">در حال بارگذاری...</div>}>
+    <Suspense fallback={<div className="text-sm text-ink-2">در حال بارگذاری...</div>}>
       <CompareContent />
     </Suspense>
   );
@@ -73,8 +73,8 @@ function CompareContent() {
       </div>
 
       {pa && pb ? (
-        <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-          <div className="grid grid-cols-3 border-b bg-muted/40 text-sm font-semibold">
+        <div className="overflow-hidden rounded-xl border bg-card">
+          <div className="grid grid-cols-3 border-b bg-surface-2/60 text-sm font-semibold">
             <div className="p-3">ویژگی</div>
             <div className="p-3 border-s text-center">
               <span className="text-lg">{categoryEmoji(pa.category)}</span>
@@ -91,14 +91,14 @@ function CompareContent() {
           </div>
           {rows.map((r) => (
             <div key={r.label} className="grid grid-cols-3 border-b last:border-0 text-sm">
-              <div className="p-3 text-muted-foreground">{r.label}</div>
+              <div className="p-3 text-ink-2">{r.label}</div>
               <div className="p-3 border-s text-center font-medium">{r.va}</div>
               <div className="p-3 border-s text-center font-medium">{r.vb}</div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed p-10 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl border border-dashed p-10 text-center text-sm text-ink-2">
           برای شروع مقایسه، هر دو محصول را انتخاب کنید
         </div>
       )}

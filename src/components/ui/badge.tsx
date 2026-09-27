@@ -1,33 +1,53 @@
-"use client";
-import * as React from "react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "default" | "secondary" | "destructive" | "outline" | "success" | "warning";
-}
+export type BadgeTone =
+  | "ok"
+  | "warn"
+  | "danger"
+  | "info"
+  | "accent"
+  | "muted"
+  | "secondary"
+  | "outline"
+  | "success"
+  | "warning"
+  | "destructive";
 
-const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant = "default", ...props }, ref) => {
-    const variants = {
-      default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-      secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-      outline: "text-foreground",
-      success: "border-transparent bg-green-100 text-green-700",
-      warning: "border-transparent bg-amber-100 text-amber-700",
-    };
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-          variants[variant],
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
-Badge.displayName = "Badge";
-export { Badge };
+const tones: Record<BadgeTone, string> = {
+  ok: "bg-ok-soft text-ok border-ok/20",
+  success: "bg-ok-soft text-ok border-ok/20",
+  warn: "bg-warn-soft text-warn border-warn/20",
+  warning: "bg-warn-soft text-warn border-warn/20",
+  danger: "bg-danger-soft text-danger border-danger/20",
+  destructive: "bg-danger-soft text-danger border-danger/20",
+  info: "bg-info-soft text-info border-info/20",
+  accent: "bg-accent-soft text-accent border-accent/20",
+  muted: "bg-surface-3 text-ink-2 border-edge",
+  secondary: "bg-surface-3 text-ink-2 border-edge",
+  outline: "bg-transparent text-ink-2 border-edge-strong",
+};
+
+export function Badge({
+  children,
+  tone = "muted",
+  variant,
+  className,
+}: {
+  children: ReactNode;
+  tone?: BadgeTone;
+  variant?: BadgeTone;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
+        tones[tone ?? variant ?? "muted"],
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}

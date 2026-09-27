@@ -94,7 +94,7 @@ export function ProductForm({
         title={initial ? "ویرایش محصول" : "افزودن محصول جدید"}
         description="همه ورودی‌ها با Zod اعتبارسنجی می‌شوند"
       />
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border bg-card p-5 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border bg-card p-5">
         <Input label="نام قطعه" placeholder="مثلاً: لنت ترمز جلو پژو 206" value={form.name} onChange={(e) => set("name", e.target.value)} error={errors.name} />
         <div className="grid gap-4 sm:grid-cols-2">
           <Select label="دسته‌بندی" value={form.category} onChange={(e) => set("category", e.target.value)} options={CATEGORIES.map((c) => ({ value: c, label: c }))} placeholder="انتخاب کنید" error={errors.category} />
@@ -110,7 +110,7 @@ export function ProductForm({
                   key={v.id}
                   type="button"
                   onClick={() => toggleVehicle(v.id)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background hover:bg-accent"}`}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-edge bg-bg-soft hover:bg-accent"}`}
                 >
                   {v.brand} {v.model}
                 </button>
@@ -127,7 +127,7 @@ export function ProductForm({
         <Input label="آدرس تصویر (اختیاری)" placeholder="https://..." value={form.imageUrl} onChange={(e) => set("imageUrl", e.target.value)} error={errors.imageUrl} />
         <div>
           <label className="block text-sm font-medium mb-1">توضیحات</label>
-          <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={4} placeholder="توضیحات کامل محصول..." className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+          <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={4} placeholder="توضیحات کامل محصول..." className="flex w-full rounded-xl border border-edge bg-bg-soft px-3 py-2 text-sm placeholder:text-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
           {errors.description && <p className="mt-1 text-sm text-destructive">{errors.description}</p>}
         </div>
         {serverError && <p className="text-sm text-destructive">{serverError}</p>}

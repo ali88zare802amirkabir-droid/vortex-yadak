@@ -52,7 +52,7 @@ export function ReservationForm({
 
   if (success) {
     return (
-      <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-200">
+      <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-200">
         رزرو شما ثبت شد. فروشنده پس از بررسی با شما تماس می‌گیرد.
       </div>
     );
@@ -61,7 +61,7 @@ export function ReservationForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-3 rounded-lg border p-4 bg-background/60"
+      className="space-y-3 rounded-xl border p-4 bg-bg-soft/60"
     >
       <h3 className="font-semibold text-sm">رزرو برای دریافت حضوری</h3>
       <div className="grid gap-3 sm:grid-cols-2">

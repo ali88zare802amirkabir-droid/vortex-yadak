@@ -1,34 +1,102 @@
 "use client";
-import * as React from "react";
+
+import {
+  forwardRef,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from "react";
 import { cn } from "@/lib/utils";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-}
+export const Input = forwardRef<
+  HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement> & { label?: string; hint?: string; error?: string }
+>(function Input({ className, label, hint, error, id, ...props }, ref) {
+  const input = (
+    <input
+      ref={ref}
+      id={id}
+      aria-invalid={error ? true : undefined}
+      className={cn(
+        "h-11 w-full rounded-xl border border-edge bg-bg-soft px-3.5 text-sm text-ink transition-colors placeholder:text-ink-3 focus:border-accent/50 focus:bg-surface focus:outline-none",
+        error && "border-danger/50",
+        className
+      )}
+      {...props}
+    />
+  );
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, id, ...props }, ref) => {
-    const generatedId = React.useId();
-    const inputId = id || generatedId;
+  if (!label) {
     return (
-      <div className="w-full">
-        {label && <label htmlFor={inputId} className="block text-sm font-medium text-foreground mb-1">{label}</label>}
-        <input
-          type="text"
-          id={inputId}
-          className={cn(
-            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-destructive focus-visible:ring-destructive",
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-        {error && <p className="mt-1 text-sm text-destructive">{error}</p>}
-      </div>
+      <>
+        {input}
+        {error && <p className="mt-1 text-xs text-danger">{error}</p>}
+      </>
     );
   }
-);
-Input.displayName = "Input";
-export { Input };
+
+  return (
+    <label className="block space-y-1.5">
+      <span className="text-[13px] font-medium text-ink-2">{label}</span>
+      {input}
+      {error ? (
+        <span className="block text-xs text-danger">{error}</span>
+      ) : (
+        hint && <span className="block text-xs text-ink-3">{hint}</span>
+      )}
+    </label>
+  );
+});
+
+export const Textarea = forwardRef<
+  HTMLTextAreaElement,
+  TextareaHTMLAttributes<HTMLTextAreaElement>
+>(function Textarea({ className, ...props }, ref) {
+  return (
+    <textarea
+      ref={ref}
+      className={cn(
+        "w-full rounded-xl border border-edge bg-bg-soft px-3.5 py-2.5 text-sm text-ink transition-colors placeholder:text-ink-3 focus:border-accent/50 focus:bg-surface focus:outline-none",
+        className
+      )}
+      {...props}
+    />
+  );
+});
+
+export const NativeSelect = forwardRef<
+  HTMLSelectElement,
+  SelectHTMLAttributes<HTMLSelectElement>
+>(function NativeSelect({ className, children, ...props }, ref) {
+  return (
+    <select
+      ref={ref}
+      className={cn(
+        "h-11 w-full appearance-none rounded-xl border border-edge bg-bg-soft px-3.5 text-sm text-ink transition-colors focus:border-accent/50 focus:bg-surface focus:outline-none",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </select>
+  );
+});
+
+export function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <label className="block space-y-1.5">
+      <span className="text-[13px] font-medium text-ink-2">{label}</span>
+      {children}
+      {hint && <span className="block text-xs text-ink-3">{hint}</span>}
+    </label>
+  );
+}

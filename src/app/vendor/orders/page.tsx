@@ -63,7 +63,7 @@ export default function VendorOrdersPage() {
               "rounded-full border px-4 py-1.5 text-xs font-medium transition-colors",
               tab === t.key
                 ? "border-primary bg-primary text-primary-foreground"
-                : "border-input bg-background hover:bg-accent"
+                : "border-edge bg-bg-soft hover:bg-accent"
             )}
           >
             {t.label}
@@ -72,22 +72,22 @@ export default function VendorOrdersPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">در حال بارگذاری...</p>
+        <p className="text-sm text-ink-2">در حال بارگذاری...</p>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed p-10 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl border border-dashed p-10 text-center text-sm text-ink-2">
           رزروی در این بخش وجود ندارد
         </div>
       ) : (
         <div className="grid gap-3">
           {filtered.map((r) => (
-            <div key={r.id} className="rounded-xl border bg-card p-4 shadow-sm">
+            <div key={r.id} className="rounded-xl border bg-card p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="font-semibold">{r.customerName}</div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-ink-2">
                     {r.productName} × {r.quantity} — {r.phone}
                   </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
+                  <div className="mt-1 text-xs text-ink-2">
                     {new Date(r.createdAt).toLocaleDateString("fa-IR")}
                   </div>
                 </div>

@@ -27,11 +27,11 @@ function ProductsSkeleton() {
           key={i}
           className="rounded-xl border bg-card overflow-hidden animate-pulse"
         >
-          <div className="aspect-square bg-muted/30" />
+          <div className="aspect-square bg-surface-2/40" />
           <div className="p-4 space-y-3">
-            <div className="h-4 bg-muted rounded w-3/4" />
-            <div className="h-4 bg-muted rounded w-1/2" />
-            <div className="h-5 bg-muted rounded w-1/3" />
+            <div className="h-4 bg-surface-2 rounded w-3/4" />
+            <div className="h-4 bg-surface-2 rounded w-1/2" />
+            <div className="h-5 bg-surface-2 rounded w-1/3" />
           </div>
         </div>
       ))}
@@ -97,7 +97,7 @@ function ProductsContent() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-foreground">محصولات</h1>
+        <h1 className="text-2xl font-bold text-ink">محصولات</h1>
         <form
           className="flex items-center gap-2 w-full sm:w-auto"
           onSubmit={(e) => {
@@ -131,11 +131,11 @@ function ProductsContent() {
 
       <div className="grid gap-4 lg:grid-cols-12">
         <aside className="lg:col-span-3 space-y-4">
-          <div className="rounded-lg border bg-card p-4 space-y-4">
+          <div className="rounded-xl border bg-card p-4 space-y-4">
             <h3 className="text-sm font-semibold">فیلترها</h3>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-muted-foreground">دسته‌بندی</label>
+                <label className="text-xs text-ink-2">دسته‌بندی</label>
                 <Select
                   value={category}
                   onChange={(e) => handleFilterChange("category", e.target.value)}
@@ -144,7 +144,7 @@ function ProductsContent() {
                 />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground">برند</label>
+                <label className="text-xs text-ink-2">برند</label>
                 <Select
                   value={brand}
                   onChange={(e) => handleFilterChange("brand", e.target.value)}
@@ -154,7 +154,7 @@ function ProductsContent() {
               </div>
               {vehicles.length > 0 && (
                 <div>
-                  <label className="text-xs text-muted-foreground">خودرو</label>
+                  <label className="text-xs text-ink-2">خودرو</label>
                   <Select
                     value={vehicle}
                     onChange={(e) => handleFilterChange("vehicle", e.target.value)}
@@ -205,28 +205,28 @@ function ProductsContent() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="rounded-xl border bg-card overflow-hidden animate-pulse">
-                  <div className="aspect-square bg-muted/30" />
+                  <div className="aspect-square bg-surface-2/40" />
                   <div className="p-4 space-y-3">
-                    <div className="h-4 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-1/2" />
-                    <div className="h-5 bg-muted rounded w-1/3" />
+                    <div className="h-4 bg-surface-2 rounded w-3/4" />
+                    <div className="h-4 bg-surface-2 rounded w-1/2" />
+                    <div className="h-5 bg-surface-2 rounded w-1/3" />
                   </div>
                 </div>
               ))}
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg className="mx-auto h-12 w-12 text-ink-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="11" cy="11" r="7" />
                 <path d="m21 21-4.3-4.3" />
               </svg>
-              <h3 className="mt-3 text-lg font-medium text-foreground">محصولی یافت نشد</h3>
-              <p className="mt-1 text-sm text-muted-foreground">فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید</p>
+              <h3 className="mt-3 text-lg font-medium text-ink">محصولی یافت نشد</h3>
+              <p className="mt-1 text-sm text-ink-2">فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید</p>
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">{products.length} محصول پیدا شد</p>
+                <p className="text-sm text-ink-2">{products.length} محصول پیدا شد</p>
                 <Badge variant="secondary" className="text-xs">نمایش {products.length} از {products.length}</Badge>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

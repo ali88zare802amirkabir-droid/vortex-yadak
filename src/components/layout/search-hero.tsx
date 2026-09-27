@@ -1,38 +1,40 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 
 export function SearchHero() {
   const [q, setQ] = useState("");
   const router = useRouter();
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         if (q.trim()) {
-          setQ(q.trim());
           router.push(`/products?q=${encodeURIComponent(q.trim())}`);
         }
       }}
-      className="relative w-full max-w-xl"
+      className="relative w-full"
+      role="search"
     >
-      <div className="relative group">
+      <div className="glass relative rounded-2xl p-1.5 shadow-pop">
+        <Search className="pointer-events-none absolute right-5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
         <input
           type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="w-full rounded-full border border-input bg-background/80 backdrop-blur-sm px-5 py-3.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-card"
+          aria-label="جستجوی قطعه"
           placeholder="مثلاً: لنت پژو 206 یا روغن سمند"
+          className="h-12 w-full rounded-xl border border-transparent bg-transparent pr-11 pl-24 text-[15px] text-ink placeholder:text-ink-3 focus:outline-none"
         />
         <button
           type="submit"
           disabled={!q.trim()}
-          className="absolute right-1.5 top-1.5 h-10 w-10 rounded-full bg-gradient-to-tr from-sky-500 to-amber-400 text-white shadow-lg disabled:opacity-50"
+          className="absolute left-1.5 top-1.5 flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-b from-accent to-cyan px-4 text-[13.5px] font-semibold text-white shadow-[0_4px_16px_-4px_color-mix(in_srgb,var(--accent)_55%,transparent)] transition-all enabled:hover:brightness-110 active:scale-[0.97] disabled:opacity-45"
         >
-          <svg className="mx-auto h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
+          <Search className="h-4 w-4" />
+          جستجو
         </button>
       </div>
     </form>

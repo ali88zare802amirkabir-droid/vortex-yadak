@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { SearchSuggestion } from "@/lib/db/types";
+import { cn } from "@/lib/utils";
 
 type SearchResult = { query: string; items: SearchSuggestion[] };
 
@@ -41,21 +42,33 @@ export function SearchSuggestions({ query, onSelect, className }: { query: strin
   const loading = !settled;
 
   return (
-    <div ref={ref} className={`absolute top-full mt-2 w-full rounded-lg border bg-popover shadow-lg shadow-black/5 z-50 py-1 ${className || ''}`}>
-      {loading && <div className="px-3 py-2 text-xs text-muted-foreground">در حال جستجو...</div>}
-      {!loading && items.length === 0 && <div className="px-3 py-2 text-xs text-muted-foreground">نتیجه‌ای یافت نشد</div>}
+    <div
+      ref={ref}
+      className={cn(
+        "absolute top-[calc(100%+8px)] right-0 z-50 w-full overflow-hidden rounded-2xl border border-edge-strong bg-surface p-1.5 shadow-pop animate-rise",
+        className
+      )}
+    >
+      {loading && (
+        <div className="px-3 py-2.5 text-[13px] text-ink-3">در حال جستجو...</div>
+      )}
+      {!loading && items.length === 0 && (
+        <div className="px-3 py-2.5 text-[13px] text-ink-3">نتیجه‌ای یافت نشد</div>
+      )}
       {items.map((s) => (
         <button
           key={s.text}
           type="button"
-          className="w-full text-right px-3 py-2 text-sm hover:bg-accent flex items-center gap-2"
+          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-right text-[13px] text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
           onClick={() => {
             onSelect(s.text);
             router.push(`/products?q=${encodeURIComponent(s.text)}`);
           }}
         >
-          <span className="text-muted-foreground text-xs">{s.type === "product" ? "محصول" : s.type === "category" ? "دسته" : "خودرو"}</span>
-          {s.text}
+          <span className="shrink-0 rounded-md bg-surface-3 px-1.5 py-0.5 text-[10px] font-semibold text-ink-3">
+            {s.type === "product" ? "محصول" : s.type === "category" ? "دسته" : "خودرو"}
+          </span>
+          <span className="truncate">{s.text}</span>
         </button>
       ))}
     </div>

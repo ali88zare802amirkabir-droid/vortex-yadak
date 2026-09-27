@@ -22,47 +22,47 @@ export default async function AdminPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
-          <div key={c.title} className="rounded-xl border bg-card p-5 shadow-sm">
+          <div key={c.title} className="rounded-xl border bg-card p-5">
             <span className="text-2xl">{c.icon}</span>
             <div className="mt-3 text-3xl font-bold">{c.value}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{c.title}</div>
+            <div className="mt-1 text-sm text-ink-2">{c.title}</div>
           </div>
         ))}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="rounded-xl border bg-card p-5">
           <h3 className="font-semibold text-sm mb-3">فروشندگان ({vendors.length})</h3>
           <ul className="space-y-2 text-sm">
             {vendors.map((v) => (
               <li key={v.id} className="flex justify-between border-b last:border-0 pb-2">
                 <span className="font-medium">{v.name}</span>
-                <span className="text-muted-foreground text-xs">{v.phone}</span>
+                <span className="text-ink-2 text-xs">{v.phone}</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="rounded-xl border bg-card p-5">
           <h3 className="font-semibold text-sm mb-3">آخرین محصولات</h3>
           <ul className="space-y-2 text-sm">
             {products.slice(0, 6).map((p) => (
               <li key={p.id} className="flex justify-between border-b last:border-0 pb-2">
                 <span className="font-medium line-clamp-1">{p.name}</span>
-                <span className="text-muted-foreground text-xs whitespace-nowrap">{p.stock} عدد</span>
+                <span className="text-ink-2 text-xs whitespace-nowrap">{p.stock} عدد</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="rounded-xl border bg-card p-5">
           <h3 className="font-semibold text-sm mb-3">آخرین رزروها</h3>
           {reservations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">رزروی ثبت نشده است</p>
+            <p className="text-sm text-ink-2">رزروی ثبت نشده است</p>
           ) : (
             <ul className="space-y-2 text-sm">
               {reservations.slice(0, 6).map((r) => (
                 <li key={r.id} className="flex justify-between border-b last:border-0 pb-2">
                   <span className="font-medium">{r.customerName}</span>
-                  <span className="text-muted-foreground text-xs">{formatStatus(r.status)}</span>
+                  <span className="text-ink-2 text-xs">{formatStatus(r.status)}</span>
                 </li>
               ))}
             </ul>
@@ -71,10 +71,10 @@ export default async function AdminPage() {
       </div>
 
       <div className="flex gap-2">
-        <Link href="/vendor" className="inline-flex h-9 items-center rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent">
+        <Link href="/vendor" className="inline-flex h-9 items-center rounded-xl border border-edge bg-bg-soft px-4 text-sm font-medium hover:bg-accent">
           پنل فروشنده
         </Link>
-        <Link href="/products" className="inline-flex h-9 items-center rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent">
+        <Link href="/products" className="inline-flex h-9 items-center rounded-xl border border-edge bg-bg-soft px-4 text-sm font-medium hover:bg-accent">
           مشاهده فروشگاه
         </Link>
       </div>
