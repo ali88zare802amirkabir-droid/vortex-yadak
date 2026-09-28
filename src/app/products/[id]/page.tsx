@@ -3,6 +3,7 @@ import { formatPrice } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
 import { ReservationForm } from "@/components/product/reservation-form";
 import { categoryEmoji } from "@/lib/category-emoji";
+import Image from "next/image";
 import Link from "next/link";
 
 interface PageProps {
@@ -53,8 +54,18 @@ export default async function ProductPage({ params }: PageProps) {
           / {product.name}
         </nav>
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="aspect-square rounded-xl bg-surface-2/40 flex items-center justify-center text-6xl">
-            {categoryEmoji(product.category)}
+          <div className="aspect-square rounded-xl bg-surface-2/40 flex items-center justify-center text-6xl overflow-hidden">
+            {product.imageUrl ? (
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            ) : (
+              categoryEmoji(product.category)
+            )}
           </div>
           <div className="space-y-4">
             <div>

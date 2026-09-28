@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import { Battery, Disc, Droplets, Gauge, Settings2 } from "lucide-react";
 import { Product } from "@/lib/db/types";
@@ -30,12 +31,24 @@ export function ProductCard({ product }: { product: Product }) {
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-edge bg-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-pop"
     >
       <div className="relative aspect-4/3 overflow-hidden border-b border-edge bg-gradient-to-br from-surface-2 to-bg-soft">
-        <div className="absolute inset-0 bg-grid opacity-40 transition-opacity duration-300 group-hover:opacity-70" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-edge-strong bg-surface-2/80 shadow-pop transition-transform duration-300 group-hover:scale-105">
-            <Icon className="h-7 w-7 text-accent" />
+        {product.imageUrl ? (
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-grid opacity-40" />
+        )}
+        {!product.imageUrl && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-edge-strong bg-surface-2/80 shadow-pop transition-transform duration-300 group-hover:scale-105">
+              <Icon className="h-7 w-7 text-accent" />
+            </div>
           </div>
-        </div>
+        )}
         <div className="absolute right-3 top-3 flex flex-wrap justify-end gap-1.5">
           <Badge tone="accent">{product.category}</Badge>
         </div>

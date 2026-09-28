@@ -99,6 +99,15 @@ async function main() {
   const allVendors = await prisma.vendor.findMany();
   const allVehicles = await prisma.vehicle.findMany();
 
+  const categoryImage: Record<string, string> = {
+    ترمز: "/product-images/brake.jpg",
+    موتور: "/product-images/sparkplug.jpg",
+    مصرفی: "/product-images/oilfilter.jpg",
+    برق: "/product-images/electrical.jpg",
+    بدنه: "/product-images/body.jpg",
+    جلوبندی: "/product-images/tire.jpg",
+  };
+
   let i = 0;
   for (const [name, category, brand] of pairs) {
     const vendor = allVendors[i % allVendors.length];
@@ -113,6 +122,7 @@ async function main() {
         stock,
         description: `${name} — برند ${brand} — کیفیت بالا و قیمت مناسب`,
         technicalNo: `T${1000 + i}`,
+        imageUrl: categoryImage[category] ?? "/product-images/brake.jpg",
         vendor: { connect: { id: vendor.id } },
         compatibilities: {
           create: allVehicles
